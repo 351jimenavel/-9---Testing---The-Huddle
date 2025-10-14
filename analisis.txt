@@ -1,0 +1,51 @@
+Ejercicio 1: TDD en acción (sin código)
+Basado en el challenge 3 - Chat en Red con Sockets.
+Analisis de los archivos v1cliente.py y v1servidor.py
+
+Pregunta clave: Que partes de este codigo dependen de algo que podria fallar?
+
+Flujo que sigue el chat:
+1. El servidor se levanta y escucha conexiones.
+2. Un cliente se conecta
+3. El cliente envia un mensaje.
+4. El servidor lo recibe.
+5. El servidor reenvia ese mensaje a los demas clientes.
+6. Un cliente de desconecta.
+7. Se cierra servidor
+
+Que podria salir mal en cada paso?
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    Paso    |       Posible falla                                                                       |         Consecuencia
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+     1      |   socket creado incorrectamente                                                           |    cliente nunca se une
+     1      |   socket se desconecta por interrupcion de teclado (ctrl + C)                             |
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+     2      |                                                                                           |
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+     3      |    Se manda un mensaje vacio                                                              |    Todos reciben basura
+     3      |    El cliente recibe su propio mensaje                                                    |    visualmente innecesario
+     3      |    cliente escribe 'salir'                                                                |    se envia ese mensaje a todos los clientes (no deberia pasar)    (en todo caso que les aparezca un aviso de que el cliente se desconcecto, no que literalmente mando 'salir')
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+     4      |                                                                                           |
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+     5      |    Un socket cerrado sigue en la lista                                                    |    servidor lanza excepcion
+     5      |    cliente cerrado por interrupcion de teclado (ctrl + C)                                 |    servidor sigue haciendo broadcast de los mensajes enviados por otros clientes
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+     6      |    No se remueve al cliente                                                               |    errores en futuros envios
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+     7      |    Cerrar servidor por interrupcion de teclado (ctrl + C)                                 |    no cierra automaticamente pero si un cliente se une o envia un mensaje ahi salta el error de keyboard interrupt y se cierra el servidor y los clientes
+     7      |    Actualmente no hay comando o palabra clave para cerrar el servidor de manera correcta. |
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+OBJETIVO: Escribir el proceso como si fuera un guionista técnico:
+
+RED: describe una prueba que fallaría (qué esperas que falle).
+Ejemplo: “Si el mensaje está vacío, el sistema debería rechazarlo, pero ahora no lo hace.”
+
+GREEN: describe qué harías para que pase (“agregar validación de longitud”).
+
+REFACTOR: describe cómo mejorarías tu código una vez que funcione.
+
+Esto enseña la mentalidad TDD: fallar primero, arreglar, optimizar.
+
