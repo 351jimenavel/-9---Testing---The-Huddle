@@ -1,9 +1,8 @@
-MAX_CLIENTS = 100
-
 class ClientRegistry:
 
-    def __init__(self):
+    def __init__(self, max_clients):
         self._ids = set()
+        self.max_clients = max_clients
 
     def _es_id_valido(self, id):
 
@@ -18,7 +17,7 @@ class ClientRegistry:
         if not self._es_id_valido(id):
             return False
         
-        if MAX_CLIENTS is not None and len(self._ids) >= MAX_CLIENTS:
+        if self.max_clients is not None and len(self._ids) >= self.max_clients:
             return False
         
         id_normalizado = id.strip()
