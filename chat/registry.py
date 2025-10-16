@@ -3,7 +3,7 @@ MAX_CLIENTS = 100
 class ClientRegistry:
 
     def __init__(self):
-        self._ids = []
+        self._ids = set()
 
     def _es_id_valido(self, id):
 
@@ -25,7 +25,7 @@ class ClientRegistry:
         if id_normalizado in self._ids:
             return False
         
-        self._ids.append(id_normalizado)
+        self._ids.add(id_normalizado)
         return True
 
     def remove(self, id):
@@ -34,7 +34,7 @@ class ClientRegistry:
         
         id_normalizado = id.strip()
         if id_normalizado in self._ids:
-            self._ids.remove(id_normalizado)
+            self._ids.discard(id_normalizado)
             return True
         return False
     
