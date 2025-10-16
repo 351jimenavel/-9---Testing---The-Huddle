@@ -1,7 +1,7 @@
 import pytest 
 from chat.registry import ClientRegistry
 
-
+# 1) Alta simple
 def test_add_un_cliente_incrementa_tamanho():
     registro = ClientRegistry()
     ok = registro.add("c1")
@@ -46,3 +46,20 @@ def test_multiple_altas_y_baja_intermedia():
     assert "c3" in lista
     assert "c2" not in lista
     assert registro.size() == 2
+
+# 5. IDs invalidos (vacio, espacios, tipos no str)
+def test_ids_invalidos_rechazados_en_add_y_contains():
+    registro = ClientRegistry()
+
+    for invalido in ["", "  ", None, 123, []]:
+        assert not registro.add(invalido)
+        assert not registro.contains(invalido)
+    assert registro.size() == 0
+
+# 6. Normalizacion de bordes (strip)
+def test_ids_con_espacios_borde_se_normalizan():
+    registro = ClientRegistry()
+    registro.add("  c1  ")
+    assert registro.contains("c1")
+    assert registro.contains("  c1  ")
+    assert registro.size() == 1
