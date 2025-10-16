@@ -18,7 +18,7 @@ class ClientRegistry:
         if not self._es_id_valido(id):
             return False
         
-        if MAX_CLIENTS and len(self._ids) >= MAX_CLIENTS:
+        if MAX_CLIENTS is not None and len(self._ids) >= MAX_CLIENTS:
             return False
         
         id_normalizado = id.strip()
@@ -45,6 +45,9 @@ class ClientRegistry:
     
     def list(self):
         return list(self._ids)
+    
+    def size(self):
+        return len(self._ids)
     
     def clear(self):
         self._ids.clear()
