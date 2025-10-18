@@ -32,5 +32,6 @@ def recv_line(sock, timeout=1.0):
                 linea, _resto = buffer.split("\n", 1)
                 return linea
         except socket.timeout:
+            # Se reintenta hasta el deadline
             continue
     return None
