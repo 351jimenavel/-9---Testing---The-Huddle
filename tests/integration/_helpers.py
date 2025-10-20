@@ -1,10 +1,14 @@
 import socket
 import time
 
+# Buffer persistente por socket
+_buffers = {}  # key: id(sock) -> str con datos pendientes
+
 def make_client(host, port):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.settimeout(1.0)
     sock.connect((host, port))
+    _buffers[id(sock)] = ""            # inicializa buffer del socket
     return sock
 
 def send_line(sock, text):
@@ -18,20 +22,38 @@ def recv_line(sock, timeout=1.0):
     """
 
     deadline = time.monotonic() + timeout
-    buffer = ""
+    buf = _buffers.get(id(sock), "")
 
     while time.monotonic() < deadline:
+        # Ya hay una linea completa en el buffer?
+        if "\n" in buf:
+            linea, buf = buf.split("\n", 1)
+            _buffers[id(sock)] = buf
+            return linea
+
+        # Si no, leemos mas datos
         try:
             chunk = sock.recv(1024)
 
             if chunk == b"":
+                # peer cerro; vaciamos buffer y devolvemos lo que haya
+                _buffers.pop(id(sock), None)
                 return None
-            buffer += chunk.decode('utf-8')
+            buf += chunk.decode('utf-8')
 
-            if "\n" in buffer:
-                linea, _resto = buffer.split("\n", 1)
-                return linea
         except socket.timeout:
             # Se reintenta hasta el deadline
             continue
+
+    # timeout sin linea completa, guardamos lo acumulado
+    _buffers[id(sock)] = buf
     return None
+
+def close_client(sock):
+    # helper opcional para limpiar y cerrar
+    try:
+        sock.shutdown(socket.SHUT_RDWR)
+    except OSError:
+        pass
+    sock.close()
+    _buffers.pop(id(sock), None)
