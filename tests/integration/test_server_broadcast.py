@@ -1,4 +1,4 @@
-from _helpers import make_client, send_line, recv_line
+from _helpers import make_client, send_line, recv_line, close_client
 import pytest
 import time
 
@@ -26,10 +26,6 @@ def test_broadcast(server_running):
     assert recv_line(a) is None
 
     # Limpieza
-    for s in (a, b, c):
-        try:
-            import socket as _s
-            try: s.shutdown(_s.SHUT_RDWR)
-            except OSError: pass
-        finally:
-            s.close()
+    close_client(a)
+    close_client(b)
+    close_client(c)
