@@ -1,5 +1,10 @@
 from _helpers import make_client, send_line, recv_line, close_client
 
+'''
+Garantiza que los mensajes se reciban en el mismo orden en que se enviaron
+Importante para validar que no haya reordenamiento en el broadcast
+'''
+
 def test_order_preserved(server_running):
     host, port, server = server_running
 

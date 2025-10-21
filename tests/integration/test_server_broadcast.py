@@ -1,6 +1,12 @@
 from _helpers import make_client, send_line, recv_line, close_client
-import pytest
 import time
+
+'''
+Tres clientes conectados (A, B, C)
+A envia un mensaje → el servidor lo difunde a los demás
+A no recibe eco del propio mensaje
+Se usa reintento hasta que registry.size() == 3 para sincronizar
+'''
 
 def test_broadcast(server_running):
     host, port, server = server_running

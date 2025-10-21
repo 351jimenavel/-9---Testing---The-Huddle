@@ -1,6 +1,12 @@
 from _helpers import make_client, send_line, recv_line, close_client
 import time
 
+'''
+Un cliente se desconecta abruptamente
+El servidor lo limpia del registro sin bloquearse
+Los otros clientes pueden seguir enviando y recibiendo mensajes sin problema
+'''
+
 def test_disconnect_during_session(server_running):
     host, port, server = server_running
     A = make_client(host, port)

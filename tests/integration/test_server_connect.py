@@ -1,6 +1,12 @@
 from _helpers import make_client, close_client
-import pytest
 import time
+
+'''
+Verifica que varios clientes pueden conectarse al servidor
+Que el registry refleje la cantidad correcta de conexiones
+Que las desconexiones se detecten y limpien correctamente
+'''
+
 
 def test_multiple_clients_connect_and_disconnect(server_running):
     host, port, server = server_running
